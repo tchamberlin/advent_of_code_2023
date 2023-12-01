@@ -1,0 +1,30 @@
+name: CI
+on:
+  push:
+    branches:
+      - "main"
+env:
+  FORCE_COLOR: "1" # Make tools pretty.
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  PIP_NO_PYTHON_VERSION_WARNING: "1"
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+          cache: 'pip'
+          cache-dependency-path: 'requirements.txt'
+      - name: Install package
+        run: |
+          # Install dysh itself, in editable mode (which is required to avoid breaking the caching mechanism above)
+          pip install -e .[all]
+      - name: Test with pytest
+        run: |
+          # Write coverage data files, namespaced using matrix info
+          pytest --junitxml=junit/test-results.xml
