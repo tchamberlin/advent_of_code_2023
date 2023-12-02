@@ -1,21 +1,17 @@
-"""Day 2, Part 1
+"""Day 2, Part 2
 
-The Elf would first like to know which games would have been possible if the bag contained only 12 red cubes, 13 green cubes, and 14 blue cubes?
+The power of a set of cubes is equal to the numbers of red, green, and blue cubes multiplied together. The power of the
+minimum set of cubes in game 1 is 48. In games 2-5 it was 12, 1560, 630, and 36, respectively. Adding up these five
+powers produces the sum 2286.
 
-Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
-Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
-Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
-Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
-Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green
-
+For each game, find the minimum set of cubes that must have been present. What is the sum of the power of these sets?
 """
+import math
 import re
+from collections import defaultdict
 from pathlib import Path
 
-COLOR = re.compile(r"(\d+) (red|green|blue)")
-
-
-MAX = {"red": 12, "green": 13, "blue": 14}
+COLOR_REGEX = re.compile(r"(\d+) (\w+)")
 
 
 def get_data(path: Path | str):
@@ -23,54 +19,44 @@ def get_data(path: Path | str):
     return Path(path).read_text().splitlines()
 
 
-def show_is_possible(show: str):
-    colors = {}
-    for c in show.split(","):
-        m = COLOR.match(c.strip())
-        print(f"{m=}; {c=}")
-        if m:
-            num, color = m.group(1), m.group(2)
-            num = int(num)
-            print(f"{num=}; {MAX[color]=}; {color=}")
-            colors[color] = num
-    return colors
+def get_show_power(line: str):
+    """Determine power of given show
+
+    Power is the product of the smallest possible value for each color
+    """
+    d = defaultdict(int)
+    matches = COLOR_REGEX.findall(line)
+    for num, color in matches:
+        if int(num) > d[color]:
+            d[color] = int(num)
+
+    return math.prod(d.values())
 
 
-def parse_data(lines: list[str]):
+def get_total_show_power(lines: list[str]):
+    """Determine the total power of the show
+
+    The total power is the sum of all show powers
+    """
     total = 0
     for line in lines:
-        game, rest = line.split(":")
-        _, game_id = game.split(" ")
-        shows = rest.split(";")
-        color_max = {"red": 0, "blue": 0, "green": 0}
-        for show in shows:
-            colors = show_is_possible(show.strip())
-            for color, num in colors.items():
-                if color_max[color] < num:
-                    print(f"setting {color} to {num}")
-                    color_max[color] = num
-
-        power = 1
-        for color, num in color_max.items():
-            power *= num
-
-        print(f"{line=}; {power=}")
-        total += power
+        total += get_show_power(line)
     return total
 
 
 def solve():
     """Compute final puzzle answer from input file"""
     lines = get_data(Path(__file__).parent / "input.txt")
-    answer = parse_data(lines)
+    answer = get_total_show_power(lines)
     return answer
 
 
 def test():
     """Check puzzle test case"""
     lines = get_data(Path(__file__).parent / "test_input_p1.txt")
-    actual = parse_data(lines)
-    assert actual == 2286
+    actual = get_total_show_power(lines)
+    expected = 2286
+    assert actual == expected
 
 
 if __name__ == "__main__":

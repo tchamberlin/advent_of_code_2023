@@ -1,6 +1,7 @@
 """Day 2, Part 1
 
-The Elf would first like to know which games would have been possible if the bag contained only 12 red cubes, 13 green cubes, and 14 blue cubes?
+The Elf would first like to know which games would have been possible if the bag contained only 12 red cubes, 13 green
+cubes, and 14 blue cubes?
 
 Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
 Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
@@ -12,10 +13,8 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green
 import re
 from pathlib import Path
 
-COLOR = re.compile(r"(\d+) (red|green|blue)")
-
-
-MAX = {"red": 12, "green": 13, "blue": 14}
+COLOR_REGEX = re.compile(r"(\d+) (\w+)")
+MAX_PER_COLOR = {"red": 12, "green": 13, "blue": 14}
 
 
 def get_data(path: Path | str):
@@ -24,29 +23,22 @@ def get_data(path: Path | str):
 
 
 def show_is_possible(show: str):
-    for c in show.split(","):
-        m = COLOR.match(c.strip())
-        print(f"{m=}; {c=}")
-        if m:
-            num, color = m.group(1), m.group(2)
-            num = int(num)
-            print(f"{num=}; {MAX[color]=}; {color=}")
-            if num > MAX[color]:
-                print(f"{show=} is impossible")
-                return False
-    print(f"{show=} is possible")
+    """Determine whether given set of shows is possible based on MAX_PER_COLOR"""
+    matches = COLOR_REGEX.findall(show)
+    for num, color in matches:
+        if int(num) > MAX_PER_COLOR[color]:
+            return False
+
     return True
 
 
-def parse_data(
-    lines: list[str],
-):
+def determine_possible_shows(lines: list[str]):
+    """Determine which lines represent possible shows; return the some of game IDs thereof"""
     total = 0
     for line in lines:
-        game, rest = line.split(":")
+        game, show = line.split(":")
         _, game_id = game.split(" ")
-        shows = rest.split(";")
-        if all(show_is_possible(show.strip()) for show in shows):
+        if show_is_possible(show):
             total += int(game_id)
     return total
 
@@ -54,15 +46,16 @@ def parse_data(
 def solve():
     """Compute final puzzle answer from input file"""
     lines = get_data(Path(__file__).parent / "input.txt")
-    answer = parse_data(lines)
+    answer = determine_possible_shows(lines)
     return answer
 
 
 def test():
     """Check puzzle test case"""
     lines = get_data(Path(__file__).parent / "test_input_p1.txt")
-    actual = parse_data(lines)
-    assert actual == 8
+    actual = determine_possible_shows(lines)
+    expected = 8
+    assert actual == expected
 
 
 if __name__ == "__main__":
