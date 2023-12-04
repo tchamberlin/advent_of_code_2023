@@ -104,7 +104,8 @@ ignore = [
   "D400", "D415",  # Don't care about periods
   "D203",
   "D213",
-  "D104"
+  "D104",
+  "PLR2004",
 ]
 unfixable = []
 

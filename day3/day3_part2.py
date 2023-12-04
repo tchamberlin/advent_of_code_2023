@@ -1,8 +1,10 @@
+"""Day 3, Part 2"""
+
 import math
 from collections import defaultdict
 from pathlib import Path
 
-surrounding = [
+surrounding: list[tuple[int, int]] = [
     (-1, -1),
     (-1, 0),
     (-1, 1),
@@ -19,22 +21,19 @@ def get_data(path: Path | str):
     return Path(path).read_text().splitlines()
 
 
-def is_symbol(c: str):
-    return c == "*"
-
-
-def is_adjacent_to_symbol(x: int, y: int, lines: list[str]):
+def determine_gear_location(x: int, y: int, lines: list[str]):
+    """Determine whether given gear position is adjacent to a part number"""
     for xo, yo in surrounding:
         try:
-            if lines[y][x].isdigit() and is_symbol(lines[y + yo][x + xo]):
+            if lines[y][x].isdigit() and lines[y + yo][x + xo] == "*":
                 return (x + xo, y + yo)
-
         except IndexError:
             pass
     return None
 
 
-def get_part_numbers(lines: list[str]):
+def find_sum_of_all_gear_ratios(lines: list[str]):
+    """Find all gears; return sum of their ratios"""
     m = defaultdict(list)
     loc = None
     for y, line in enumerate(lines):
@@ -42,7 +41,7 @@ def get_part_numbers(lines: list[str]):
         for x, c in enumerate(line):
             if c.isnumeric():
                 part_num += c
-                _loc = is_adjacent_to_symbol(x, y, lines)
+                _loc = determine_gear_location(x, y, lines)
                 if _loc:
                     loc = _loc
                     print(f"Found gear at {loc}")
@@ -66,7 +65,7 @@ def get_part_numbers(lines: list[str]):
 def solve():
     """Compute final puzzle answer from input file"""
     lines = get_data(Path(__file__).parent / "input.txt")
-    part_nums = get_part_numbers(lines)
+    part_nums = find_sum_of_all_gear_ratios(lines)
     answer = sum(part_nums)
     return answer
 
@@ -74,7 +73,7 @@ def solve():
 def test():
     """Check puzzle test case"""
     lines = get_data(Path(__file__).parent / "test_input_p1.txt")
-    part_nums = get_part_numbers(lines)
+    part_nums = find_sum_of_all_gear_ratios(lines)
     actual = sum(part_nums)
     expected = 467835
     print(f"{actual=}")

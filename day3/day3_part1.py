@@ -1,6 +1,5 @@
-"""
+"""Day 3, Part 1"""
 
-"""
 from pathlib import Path
 
 surrounding = [
@@ -21,12 +20,14 @@ def get_data(path: Path | str):
 
 
 def is_symbol(c: str):
+    """Determine whether character c is considered a symbol or not"""
     if c.isdigit() or c == ".":
         return False
     return True
 
 
 def is_adjacent_to_symbol(x: int, y: int, lines: list[str]):
+    """Determine whether given position x,y is adjacent to a symbol"""
     for xo, yo in surrounding:
         try:
             if lines[y][x].isdigit() and is_symbol(lines[y + yo][x + xo]):
@@ -38,7 +39,8 @@ def is_adjacent_to_symbol(x: int, y: int, lines: list[str]):
 
 
 def get_part_numbers(lines: list[str]):
-    part_nums = []
+    """Find all part numbers in all lines"""
+    part_nums: list[int] = []
     for y, line in enumerate(lines):
         part_num = ""
         is_pn = False
