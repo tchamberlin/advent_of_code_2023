@@ -23,7 +23,7 @@ repos:
           - '--fix=lf'
       - id: check-case-conflict # Check for files with names that would conflict on a case-insensitive filesystem
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.1.7
+    rev: v0.1.8
     hooks:
     - id: ruff-format
     - id: ruff
