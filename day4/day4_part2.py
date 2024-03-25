@@ -1,6 +1,5 @@
 """Day 4, Part 2"""
 
-
 from collections import deque
 from pathlib import Path
 
