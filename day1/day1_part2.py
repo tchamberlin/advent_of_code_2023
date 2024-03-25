@@ -4,6 +4,7 @@
   calibration value that the Elves now need to recover. On each line, the calibration value can be found by combining
   the first digit and the last digit (in that order) to form a single two-digit number.
 """
+
 import re
 from pathlib import Path
 
