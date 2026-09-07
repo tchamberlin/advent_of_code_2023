@@ -4,7 +4,6 @@ Determine which of the numbers you have appear in the list of winning numbers. T
 point and each match after the first doubles the point value of that card.
 """
 
-
 from pathlib import Path
 
 
