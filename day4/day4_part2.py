@@ -1,6 +1,5 @@
 """Day 4, Part 2"""
 
-
 from collections import deque
 from pathlib import Path
 
@@ -28,7 +27,7 @@ def scratch_cards(lines: list[str]):
     for line in lines:
         card_num, score = get_card_score(line)
         scores[card_num] = score
-    initial_cards = {c: 1 for c in scores}
+    initial_cards = dict.fromkeys(scores, 1)
     to_process = deque(initial_cards)
     total_num_cards = len(initial_cards)
     while to_process:
