@@ -6,6 +6,7 @@ powers produces the sum 2286.
 
 For each game, find the minimum set of cubes that must have been present. What is the sum of the power of these sets?
 """
+
 import math
 import re
 from collections import defaultdict
@@ -27,8 +28,7 @@ def get_show_power(line: str):
     d = defaultdict(int)
     matches = COLOR_REGEX.findall(line)
     for num, color in matches:
-        if int(num) > d[color]:
-            d[color] = int(num)
+        d[color] = max(d[color], int(num))
 
     return math.prod(d.values())
 
